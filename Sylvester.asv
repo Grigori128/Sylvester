@@ -34,4 +34,16 @@ T = sym('t',[4 4]);
 l = M*T-T*A;
 p = -L*C;
 
-eqns = [l]
+eqns = l == p; % tworzenie macierzy równań
+[a,b] = equationsToMatrix(eqns); % konwersja równań do postaci macierzowej at = b
+cT = vpa(linsolve(a,b),6);
+
+nT = [cT(1) cT(2) cT(3) cT(4);...
+      cT(5) cT(6) cT(7) cT(8);...
+      cT(9) cT(10) cT(11) cT(12);...
+      cT(13) cT(14) cT(15) cT(16)];
+
+N = doubnT*B-L*D;
+
+
+  

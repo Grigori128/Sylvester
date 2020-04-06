@@ -37,4 +37,13 @@ p = -L*C;
 eqns = l == p; % tworzenie macierzy równań
 [a,b] = equationsToMatrix(eqns); % konwersja równań do postaci macierzowej at = b
 cT = linsolve(a,b);
-nT = [];
+
+nT = double([cT(1) cT(2) cT(3) cT(4);...
+      cT(5) cT(6) cT(7) cT(8);...
+      cT(9) cT(10) cT(11) cT(12);...
+      cT(13) cT(14) cT(15) cT(16)]);
+
+N = double(nT*B-L*D);
+
+
+  
