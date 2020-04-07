@@ -18,7 +18,7 @@ D = zeros(2,2);
 lambda = eig(A); % stabilne
 
 % dobieranie macierzy M o zadanym wektorze wartości własnych < 0
-M = eye(4)*diag([-2 -3 -4 -5]);
+M = eye(4)*diag([-6 -7 -8 -9]);
 
 % dobieranie macierzy L
 L = ones(4,2);
