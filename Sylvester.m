@@ -1,3 +1,5 @@
+clear
+close all
 %% macierze obiektu
 A = [-0.0226 -36.6 -18.9 -32.1 ;...
            0 -1.9  0.983     0;...
@@ -45,7 +47,78 @@ nT = double([cT(1) cT(2) cT(3) cT(4);...
 
 N = double(nT*B-L*D);
 
+%% Wykresy
+out = sim('Sylvester_sym');
 
+figure(1)
+set(1,'Position',[50 50 1300 500]);
+movegui(1,'center');
+tiledlayout(5,2,'Padding','compact','TileSpacing','compact')
+nexttile(1);
+hold on;
+grid on;
+plot(out.tout,out.state.signals.values(:,1),out.tout,out.estate.signals.values(:,1));
+legend('$x_1(t)$','$\hat{x_1}(t)$','Interpreter','latex','Location','southeast');
+hold off;
 
+nexttile(3);
+hold on;
+grid on;
+plot(out.tout,out.state.signals.values(:,2),out.tout,out.estate.signals.values(:,2));
+legend('$x_2(t)$','$\hat{x_2}(t)$','Interpreter','latex','Location','southeast');
 
-  
+nexttile(5);
+hold on;
+grid on;
+plot(out.tout,out.state.signals.values(:,3),out.tout,out.estate.signals.values(:,3));
+legend('$x_3(t)$','$\hat{x_3}(t)$','Interpreter','latex','Location','southeast');
+hold off;
+
+nexttile(7);
+hold on;
+grid on;
+plot(out.tout,out.state.signals.values(:,4),out.tout,out.estate.signals.values(:,4));
+legend('$x_4(t)$','$\hat{x_4}(t)$','Interpreter','latex','Location','southeast');
+hold off;
+
+nexttile(9);
+hold on;
+grid on;
+plot(out.tout,out.output.signals.values);
+legend('$y_1(t)$','$y_2(t)$','Interpreter','latex','Location','southeast');
+hold off;
+xlabel('t (s)','Interpreter','latex');
+
+nexttile(2,[5 1]);
+hold on;
+grid on;
+xlim([0,1.5]);
+plot(out.tout,out.error.signals.values);
+legend('$e_1(t)$','$e_2(t)$','$e_3(t)$','$e_4(t)$','Interpreter','latex');
+xlabel('t (s)','Interpreter','latex');
+hold off;
+
+% zapytanie o zapis
+guifig = uifigure('Position',[680 678 398 271],'Name','Zapisać wykresy?');
+movegui(guifig,'center');
+bg = uibuttongroup(guifig,'Position',[137 113 123 85]);
+rb1 = uitogglebutton(bg,'Position',[150 60 91 25],'Text','Placeholder');
+rb2 = uitogglebutton(bg,'Position',[15 40 91 25],'Text','Zapisuj');
+rb3 = uitogglebutton(bg,'Position',[15 10 91 25],'Text','Nie zapisuj');
+figure(guifig);
+
+for i=1:500
+if rb2.Value == 1 && rb3.Value == 0 
+%zapis figurki do formatu png
+print(1, '-dpng', 'wyniki_estymacji', '-r600')
+close(guifig)
+disp('Zapisano')%
+break;
+else
+    if rb3.Value == 1 && rb2.Value == 0
+        close(guifig)
+        break;
+    end
+end
+pause(0.25);
+end
