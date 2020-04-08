@@ -20,15 +20,15 @@ D = zeros(2,2);
 lambda = eig(A); % stabilne
 
 % dobieranie macierzy M o zadanym wektorze wartości własnych < 0
-M = eye(4)*diag([-5 -6 -7 -8]);
+M = eye(4)*diag([-6 -5 -7 -8]);
 
 % dobieranie macierzy L
 L = ones(4,2);
 
 % sprawdzanie sterowalności 
-S = [L M*L (M^2)*L M^3*L];
-%S = ctrb(M,L);
-
+S = [L M*L (M^2)*L M^3*L]; % rank S = rank A
+%sprS = ctrb(M,L);
+%rank(sprS);
 % definicja macierzy T
 T = sym('t',[4 4]);
 
@@ -44,7 +44,7 @@ nT = double([cT(1) cT(2) cT(3) cT(4);...
       cT(5) cT(6) cT(7) cT(8);...
       cT(9) cT(10) cT(11) cT(12);...
       cT(13) cT(14) cT(15) cT(16)]);
-
+%sprT = sylv(-M,A,L*C);
 N = double(nT*B-L*D);
 
 %% Wykresy
@@ -110,8 +110,8 @@ figure(guifig);
 for i=1:500
 if rb2.Value == 1 && rb3.Value == 0 
 %zapis figurki do formatu png
-print(1, '-dpng', 'wyniki_estymacji', '-r600')
 close(guifig)
+print(1, '-dpng', 'wyniki_estymacji', '-r600')
 disp('Zapisano')%
 break;
 else
@@ -122,3 +122,88 @@ else
 end
 pause(0.25);
 end
+
+%% sterowanie
+sys = ss(A,B,C,D);
+Q = diag([1 1 1 1 100 50]);
+R = diag([.1 .1]);
+K = lqi(sys,Q,R);
+
+%% wizualizacja
+
+%HiMAT w STL
+fv = stlread('HiMAT_V003.STL');
+Sm = diag([0.01 0.01 0.01]); % scale
+%R1 = [cosd(60),0,sind(60);0 1 0; -sind(60) 0, cosd(60)];
+fv.vertices = fv.vertices*Sm;
+ftmp = fv;
+
+figure(2)
+set(2,'Position', [200 200 1300 600]);
+set(gca, 'LooseInset', [0,0,0,0]);
+grid on;
+time = out.tout;
+theta = out.state.signals.values(:,4);
+alpha = out.state.signals.values(:,2);
+
+% for r = 1:5:length(time)
+% set(0,'CurrentFigure',5)
+% title(strcat('t =',{' '},string((r*0.01)-0.01),'s'));
+
+% subplot(4,2,1)
+% plot(time(1:r),theta(1:r),'k-','LineWidth',1.8);
+% %ylim([min(theta)-0.1*max(theta) max(theta)+0.1*max(theta)])
+% xlim([0 t]);
+% xlabel('t (s)');
+% ylabel('\theta (rad)');
+% grid on;
+% 
+% subplot(4,2,3)
+% plot(time(1:r),omega(1:r),'b-','LineWidth',1.8);
+% %ylim([min(omega)-0.1*max(omega) max(omega)+0.1*max(omega)])
+% xlim([0 t]);
+% xlabel('t (s)');
+% ylabel('\omega (rad/s)');
+% grid on;
+% 
+% subplot(4,2,5)
+% plot(time(1:r),tau(1:r),'r-','LineWidth',1.8);
+% %ylim([min(tau)-0.1*max(tau) max(tau)+0.1*max(tau)])
+% xlim([0 t]);
+% xlabel('t (s)'); 
+% ylabel('\tau (Nm)');
+% grid on;
+% 
+% subplot(4,2,7)
+% plot(time(1:r),ctrl(1:r),'g-','LineWidth',1.8);
+% xlim([0 t]);
+% %ylim([min(ctrl)-(0.1*max(ctrl)+0.1) max(ctrl)+(0.1*max(ctrl)+0.1)])
+% xlabel('t (s)'); 
+% ylabel('r');
+% grid on;
+% 
+% subplot(4,2,[2,4,6,8])
+
+%%
+
+r = 60;
+Rz = [0 0 1;cosd(r),sind(r),0; -sind(r) cosd(r), 0];
+%Rz = [-sind(r),cosd(r),0;0 0 1; cosd(r), sind(r),0];
+%Rz = [cosd(r) sind(r) 0; -sind(r) cosd(r) 0 ;0 0 1]
+%Rz = [0 0 1; cosd(r) sind(r) 0 ; -sind(r) cosd(r) 0];
+cla
+grid on;
+view(-180,-88); % <--- blokada kamery
+ftmp.vertices = fv.vertices*Rz;
+camlight('left');
+material('metal');
+patch(ftmp,'FaceColor',       [0 1 0], ...
+         'EdgeColor',       'none',        ...
+         'FaceLighting',    'gouraud',     ...
+         'AmbientStrength', 0.15);
+material('metal');
+%drawnow
+%drawnow limitrate
+%pause(0.001)
+%end
+
