@@ -129,6 +129,72 @@ Q = diag([1 1 1 1 100 50]);
 R = diag([.1 .1]);
 K = lqi(sys,Q,R);
 
+out2 = sim('LQI_control');
+
+%% wykresy odpowiedzi układu z regulatorem LQI
+
+figure(3)
+set(3,'Position',[50 50 1300 500]);
+movegui(3,'center');
+tiledlayout(4,2,'Padding','compact','TileSpacing','compact')
+nexttile(1);
+hold on;
+grid on;
+plot(out2.tout,out2.state.signals.values(:,1));
+ylabel('$x_1$','Interpreter','latex');
+hold off;
+
+nexttile(3);
+hold on;
+grid on;
+plot(out2.tout,out2.state.signals.values(:,2));
+ylabel('$x_2$','Interpreter','latex');
+hold off;
+
+nexttile(5);
+hold on;
+grid on;
+plot(out2.tout,out2.state.signals.values(:,3));
+ylabel('$x_3$','Interpreter','latex');
+hold off;
+
+nexttile(7);
+hold on;
+grid on;
+plot(out2.tout,out2.state.signals.values(:,4));
+ylabel('$x_4$','Interpreter','latex');
+xlabel('t (s)','Interpreter','latex');
+hold off;
+
+nexttile(2)
+hold on;
+grid on;
+plot(out2.tout,out2.output.signals.values(:,1),out2.tout,out2.ref1.signals.values);
+legend('$y_1(t)$','$r_1(t)$','Interpreter','latex');
+hold off;
+
+nexttile(4)
+hold on;
+grid on;
+plot(out2.tout,out2.output.signals.values(:,2),out2.tout,out2.ref2.signals.values);
+legend('$y_2(t)$','$r_2(t)$','Interpreter','latex');
+hold off;
+
+nexttile(6)
+hold on;
+grid on;
+plot(out2.tout,out2.control.signals.values(:,1));
+ylabel('$u_1$','Interpreter','latex');
+hold off;
+
+nexttile(8)
+hold on;
+grid on;
+plot(out2.tout,out2.control.signals.values(:,2));
+ylabel('$u_2$','Interpreter','latex');
+xlabel('t (s)','Interpreter','latex');
+hold off;
+
 %% wizualizacja
 
 %HiMAT w STL

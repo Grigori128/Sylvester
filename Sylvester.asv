@@ -20,7 +20,7 @@ D = zeros(2,2);
 lambda = eig(A); % stabilne
 
 % dobieranie macierzy M o zadanym wektorze wartości własnych < 0
-M = eye(4)*diag([-5 -6 -7 -8]);
+M = eye(4)*diag([-6 -5 -7 -8]);
 
 % dobieranie macierzy L
 L = ones(4,2);
@@ -123,14 +123,64 @@ end
 pause(0.25);
 end
 
+%% sterowanie
+sys = ss(A,B,C,D);
+Q = diag([1 1 1 1 100 50]);
+R = diag([.1 .1]);
+K = lqi(sys,Q,R);
+
+out2 = sim('LQI_control');
+
+%% wykresy odpowiedzi układu z regulatorem LQI
+
+figure(3)
+set(3,'Position',[50 50 1300 500]);
+movegui(3,'center');
+tiledlayout(4,2,'Padding','compact','TileSpacing','compact')
+nexttile(1);
+hold on;
+grid on;
+plot(out2.tout,out2.state.signals.values(:,1));
+hold off;
+
+nexttile(3);
+hold on;
+grid on;
+plot(out2.tout,out2.state.signals.values(:,2));
+
+nexttile(5);
+hold on;
+grid on;
+plot(out2.tout,out2.state.signals.values(:,3));
+hold off;
+
+nexttile(7);
+hold on;
+grid on;
+plot(out2.tout,out2.state.signals.values(:,4));
+hold off;
+
+nexttile(2)
+hold on;
+grid on;
+plot(out2.tout,out2.output.signals.values(:,1),out2.tout,out2.ref1.signals.values);
+legend('','','Interpreter','latex');
+hold off;
+
+nexttile(4)
+hold on;
+grid on;
+plot(out2.tout,out2.output.signals.values(:,2),out2.tout,out2.ref2.signals.values);
+legend('','','Interpreter','latex');
+hold off;
 
 %% wizualizacja
 
 %HiMAT w STL
 fv = stlread('HiMAT_V003.STL');
 Sm = diag([0.01 0.01 0.01]); % scale
-R1 = [cosd(60),0,sind(60);0 1 0; -sind(60) 0, cosd(90)];
-fv.vertices = fv.vertices*R1*Sm;
+%R1 = [cosd(60),0,sind(60);0 1 0; -sind(60) 0, cosd(60)];
+fv.vertices = fv.vertices*Sm;
 ftmp = fv;
 
 figure(2)
@@ -181,13 +231,14 @@ alpha = out.state.signals.values(:,2);
 
 %%
 
-%r = 40;
-%Rz = [0 0 1;cos(theta(r)),sin(theta(r)),0; -sin(theta(r)) cos(theta(r)), 0];
+r = 60;
+Rz = [0 0 1;cosd(r),sind(r),0; -sind(r) cosd(r), 0];
 %Rz = [-sind(r),cosd(r),0;0 0 1; cosd(r), sind(r),0];
-Rz = [0 0 1; cosd(r) sind(r) 0 ; -sind(r) cosd(r) 0];
+%Rz = [cosd(r) sind(r) 0; -sind(r) cosd(r) 0 ;0 0 1]
+%Rz = [0 0 1; cosd(r) sind(r) 0 ; -sind(r) cosd(r) 0];
 cla
 grid on;
-view(-63,36); % <--- blokada kamery
+view(-180,-88); % <--- blokada kamery
 ftmp.vertices = fv.vertices*Rz;
 camlight('left');
 material('metal');
