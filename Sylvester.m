@@ -195,6 +195,31 @@ ylabel('$u_2$','Interpreter','latex');
 xlabel('t (s)','Interpreter','latex');
 hold off;
 
+% zapytanie o zapis
+guifig2 = uifigure('Position',[680 678 398 271],'Name','Zapisać wykresy?');
+movegui(guifig2,'center');
+bg = uibuttongroup(guifig2,'Position',[137 113 123 85]);
+rb1 = uitogglebutton(bg,'Position',[150 60 91 25],'Text','Placeholder');
+rb2 = uitogglebutton(bg,'Position',[15 40 91 25],'Text','Zapisuj');
+rb3 = uitogglebutton(bg,'Position',[15 10 91 25],'Text','Nie zapisuj');
+figure(guifig2);
+
+for i=1:500
+if rb2.Value == 1 && rb3.Value == 0 
+%zapis figurki do formatu png
+close(guifig2)
+print(3, '-dpng', 'wyniki_sterowania', '-r600')
+disp('Zapisano')%
+break;
+else
+    if rb3.Value == 1 && rb2.Value == 0
+        close(guifig2)
+        break;
+    end
+end
+pause(0.25);
+end
+
 %% wizualizacja
 
 %HiMAT w STL
