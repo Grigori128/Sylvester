@@ -48,6 +48,8 @@ nT = double([cT(1) cT(2) cT(3) cT(4);...
 N = double(nT*B-L*D);
 
 %% Wykresy
+x0 = [5 5 5 5]'; 
+z0 = nT*[-5 -5 -5 -5]';
 out = sim('Sylvester_sym');
 
 figure(1)
@@ -125,8 +127,8 @@ end
 
 %% sterowanie
 sys = ss(A,B,C,D);
-Q = diag([1 1 1 1 100 50]);
-R = diag([.1 .1]);
+Q = diag([1 1 1 1 100 50]); %[x1 x2 x3 x4 y1 y2]
+R = diag([.1 .1]); %[u1 u2]
 K = lqi(sys,Q,R);
 
 out2 = sim('LQI_control');
