@@ -228,10 +228,14 @@ end
 
 %HiMAT w STL
 fv = stlread('HiMAT_V003.STL');
+ar = stlread('arrow.stl');
 Sm = diag([0.01 0.01 0.01]); % scale
+Sm2 = diag([0.3 0.3 1]);
 %R1 = [cosd(60),0,sind(60);0 1 0; -sind(60) 0, cosd(60)];
 fv.vertices = fv.vertices*Sm;
+ar.vertices = ar.vertices*Sm2;
 ftmp = fv;
+artmp = ar;
 
 figure(2)
 set(2,'Position', [200 200 1300 600]);
@@ -288,11 +292,13 @@ zlim([-50 50])
 
 %k¹ty obrotu
 s = theta(r)-90; %oœ x
+d = theta(r) - alpha(r)-90;
 p = 0; %oœ y
 y = 0; %oœ z <-- to nas interesuje
 
 %macierze rotacji dla poszczególnych osi
 Rx = [1 0 0; 0 cosd(s) -sind(s); 0 sind(s), cosd(s)];
+Ra = [1 0 0; 0 cosd(d) -sind(d); 0 sind(d), cosd(d)];
 Ry = [cosd(p) 0 sind(p); 0 1 0; -sind(p) 0 cosd(p)];
 Rz = [cosd(y) -sind(y) 0; sind(y) cosd(y) 0; 0 0 1];
 
@@ -306,7 +312,9 @@ view(-76,15); % <--- blokada kamery
 
 %dodanie translacji i wymno¿enie przez rotacjê
 ftmp.vertices = (fv.vertices+trans)*Rx*Ry*Rz;
+artmp.vertices = (ar.vertices)*Ra;
 
+patch([50 -50 -50 50],[50 50 -50 -50],'k','FaceAlpha',0.2)
 camlight('left');
 material('metal');
 h = patch(ftmp,'FaceColor',       [0 1 0], ...
@@ -314,6 +322,13 @@ h = patch(ftmp,'FaceColor',       [0 1 0], ...
          'FaceLighting',    'gouraud',     ...
          'AmbientStrength', 0.15);
 material('metal');
+
+a = patch(artmp,'FaceColor',       [1 0 0], ...
+         'EdgeColor',       'none',        ...
+         'FaceLighting',    'gouraud',     ...
+         'AmbientStrength', 0.15);
+material('metal');
+
 rotate(h, [1,0,0], 0)
 drawnow
 
