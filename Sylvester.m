@@ -48,8 +48,9 @@ nT = double([cT(1) cT(2) cT(3) cT(4);...
 N = double(nT*B-L*D);
 
 %% Wykresy
-x0 = [5 5 5 5]'; 
-z0 = nT*[-5 -5 -5 -5]';
+x0 = [1 1 1 1]'; 
+z0 = nT*[-1 -1 -1 -1]';
+t = 5;
 out = sim('Sylvester_sym');
 
 figure(1)
@@ -131,6 +132,7 @@ Q = diag([1 1 1 1 100 50]); %[x1 x2 x3 x4 y1 y2]
 R = diag([.1 .1]); %[u1 u2]
 K = lqi(sys,Q,R);
 
+t = 25;
 out2 = sim('LQI_control');
 
 %% wykresy odpowiedzi uk≈Çadu z regulatorem LQI
@@ -234,69 +236,86 @@ ftmp = fv;
 figure(2)
 set(2,'Position', [200 200 1300 600]);
 set(gca, 'LooseInset', [0,0,0,0]);
+
 grid on;
-time = out.tout;
-theta = out.state.signals.values(:,4);
-alpha = out.state.signals.values(:,2);
+time = out2.tout;
+theta = out2.state.signals.values(:,4);
+alpha = out2.state.signals.values(:,2);
 
-% for r = 1:5:length(time)
-% set(0,'CurrentFigure',5)
-% title(strcat('t =',{' '},string((r*0.01)-0.01),'s'));
+for r = 1:10:length(time)
+set(0,'CurrentFigure',2)
+title(strcat('t =',{' '},string((r*0.01)-0.01),'s'));
 
-% subplot(4,2,1)
-% plot(time(1:r),theta(1:r),'k-','LineWidth',1.8);
-% %ylim([min(theta)-0.1*max(theta) max(theta)+0.1*max(theta)])
-% xlim([0 t]);
-% xlabel('t (s)');
-% ylabel('\theta (rad)');
-% grid on;
-% 
-% subplot(4,2,3)
-% plot(time(1:r),omega(1:r),'b-','LineWidth',1.8);
-% %ylim([min(omega)-0.1*max(omega) max(omega)+0.1*max(omega)])
-% xlim([0 t]);
-% xlabel('t (s)');
-% ylabel('\omega (rad/s)');
-% grid on;
-% 
-% subplot(4,2,5)
-% plot(time(1:r),tau(1:r),'r-','LineWidth',1.8);
-% %ylim([min(tau)-0.1*max(tau) max(tau)+0.1*max(tau)])
-% xlim([0 t]);
-% xlabel('t (s)'); 
-% ylabel('\tau (Nm)');
-% grid on;
-% 
-% subplot(4,2,7)
-% plot(time(1:r),ctrl(1:r),'g-','LineWidth',1.8);
-% xlim([0 t]);
-% %ylim([min(ctrl)-(0.1*max(ctrl)+0.1) max(ctrl)+(0.1*max(ctrl)+0.1)])
-% xlabel('t (s)'); 
-% ylabel('r');
-% grid on;
-% 
-% subplot(4,2,[2,4,6,8])
+subplot(4,2,1)
+plot(out2.tout(1:r),out2.state.signals.values(1:r,1),'k-','LineWidth',1.8);
+%ylim([min(theta)-0.1*max(theta) max(theta)+0.1*max(theta)])
+xlim([0 t]);
+xlabel('t (s)');
+ylabel('x_1');
+grid on;
+
+subplot(4,2,3)
+plot(out2.tout(1:r),out2.state.signals.values(1:r,2),'b-','LineWidth',1.8);
+%ylim([min(omega)-0.1*max(omega) max(omega)+0.1*max(omega)])
+xlim([0 t]);
+xlabel('t (s)');
+ylabel('x_2');
+grid on;
+
+subplot(4,2,5)
+plot(out2.tout(1:r),out2.state.signals.values(1:r,3),'r-','LineWidth',1.8);
+%ylim([min(tau)-0.1*max(tau) max(tau)+0.1*max(tau)])
+xlim([0 t]);
+xlabel('t (s)'); 
+ylabel('x_3');
+grid on;
+
+subplot(4,2,7)
+plot(out2.tout(1:r),out2.state.signals.values(1:r,4),'g-','LineWidth',1.8);
+xlim([0 t]);
+%ylim([min(ctrl)-(0.1*max(ctrl)+0.1) max(ctrl)+(0.1*max(ctrl)+0.1)])
+xlabel('t (s)'); 
+ylabel('x_4');
+grid on;
+
+subplot(4,2,[2,4,6,8])
 
 %%
+%limity
+xlim([-50 50])
+ylim([-50 50])
+zlim([-50 50])
 
-r = 60;
-Rz = [0 0 1;cosd(r),sind(r),0; -sind(r) cosd(r), 0];
-%Rz = [-sind(r),cosd(r),0;0 0 1; cosd(r), sind(r),0];
-%Rz = [cosd(r) sind(r) 0; -sind(r) cosd(r) 0 ;0 0 1]
-%Rz = [0 0 1; cosd(r) sind(r) 0 ; -sind(r) cosd(r) 0];
+%kπty obrotu
+s = theta(r)-90; %oú x
+p = 0; %oú y
+y = 0; %oú z <-- to nas interesuje
+
+%macierze rotacji dla poszczegÛlnych osi
+Rx = [1 0 0; 0 cosd(s) -sind(s); 0 sind(s), cosd(s)];
+Ry = [cosd(p) 0 sind(p); 0 1 0; -sind(p) 0 cosd(p)];
+Rz = [cosd(y) -sind(y) 0; sind(y) cosd(y) 0; 0 0 1];
+
+%wektor translacji do centrowania
+le=length(ftmp.vertices);
+trans=[-25.9*ones(le,1),-12*ones(le,1),-35*ones(le,1)];
+
 cla
 grid on;
-view(-180,-88); % <--- blokada kamery
-ftmp.vertices = fv.vertices*Rz;
+view(-76,15); % <--- blokada kamery
+
+%dodanie translacji i wymnoøenie przez rotacjÍ
+ftmp.vertices = (fv.vertices+trans)*Rx*Ry*Rz;
+
 camlight('left');
 material('metal');
-patch(ftmp,'FaceColor',       [0 1 0], ...
+h = patch(ftmp,'FaceColor',       [0 1 0], ...
          'EdgeColor',       'none',        ...
          'FaceLighting',    'gouraud',     ...
          'AmbientStrength', 0.15);
 material('metal');
-%drawnow
-%drawnow limitrate
-%pause(0.001)
-%end
+rotate(h, [1,0,0], 0)
+drawnow
+
+end
 
