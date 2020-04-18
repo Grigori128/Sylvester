@@ -282,6 +282,22 @@ xlabel('t (s)');
 ylabel('x_4');
 grid on;
 
+% subplot(4,3,11)
+% plot(out2.tout(1:r),out2.output.signals.values(1:r,1),'m-','LineWidth',1.8);
+% xlim([0 t]);
+% %ylim([min(ctrl)-(0.1*max(ctrl)+0.1) max(ctrl)+(0.1*max(ctrl)+0.1)])
+% xlabel('t (s)'); 
+% ylabel('y_1');
+% grid on;
+% 
+% subplot(4,3,10)
+% plot(out2.tout(1:r),out2.output.signals.values(1:r,2),'c-','LineWidth',1.8);
+% xlim([0 t]);
+% %ylim([min(ctrl)-(0.1*max(ctrl)+0.1) max(ctrl)+(0.1*max(ctrl)+0.1)])
+% xlabel('t (s)'); 
+% ylabel('y_2');
+% grid on;
+
 subplot(4,2,[2,4,6,8])
 
 %%
