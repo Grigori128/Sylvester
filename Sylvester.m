@@ -16,10 +16,10 @@ C = [0  57.3  0  0;...
  
 D = zeros(2,2);
 
-% wart. własne A
+% wart. w�asne A
 lambda = eig(A); % stabilne
 
-% dobieranie macierzy M o zadanym wektorze wartości własnych < 0
+% dobieranie macierzy M o zadanym wektorze warto�ci w�asnych < 0
 M = eye(4)*diag([-6 -5 -7 -8]);
 
 % dobieranie macierzy L
@@ -27,17 +27,16 @@ L = ones(4,2);
 
 % sprawdzanie sterowalności 
 S = [L M*L (M^2)*L M^3*L]; % rank S = rank A
-%sprS = ctrb(M,L);
-%rank(sprS);
+
 % definicja macierzy T
 T = sym('t',[4 4]);
 
-% równanie Sylvestera
+% rownanie Sylvestera
 l = M*T-T*A;
 p = -L*C;
 
-eqns = l == p; % tworzenie macierzy równań
-[a,b] = equationsToMatrix(eqns); % konwersja równań do postaci macierzowej at = b
+eqns = l == p; % tworzenie macierzy rownan
+[a,b] = equationsToMatrix(eqns); % konwersja do postaci macierzowej At = B
 cT = linsolve(a,b);
 
 nT = double([cT(1) cT(2) cT(3) cT(4);...
@@ -50,8 +49,8 @@ N = double(nT*B-L*D);
 %% Wykresy
 x0 = [1 1 1 1]'; 
 z0 = nT*[-1 -1 -1 -1]';
-t = 5;
-out = sim('Sylvester_sym');
+t = 10;
+out = sim('Sylvester_sym'); %skoki jednostkowe na t = 2 dla u1 i t = 7 dla u2 
 
 figure(1)
 set(1,'Position',[50 50 1300 500]);
@@ -128,11 +127,11 @@ end
 
 %% sterowanie
 sys = ss(A,B,C,D);
-Q = diag([1 1 1 1 100 50]); %[x1 x2 x3 x4 y1 y2]
-R = diag([.1 .1]); %[u1 u2]
+Q = diag([0.1 0.1 0.1 0.1 50 50]); %[x1 x2 x3 x4 y1 y2]
+R = diag([0.1 0.1]); %[u1 u2]
 K = lqi(sys,Q,R);
 
-t = 25;
+t = 15;
 out2 = sim('LQI_control');
 
 %% wykresy odpowiedzi układu z regulatorem LQI
@@ -246,7 +245,7 @@ time = out2.tout;
 theta = out2.state.signals.values(:,4);
 alpha = out2.state.signals.values(:,2);
 
-for r = 1:10:length(time)
+for r = 1:20:length(time)
 set(0,'CurrentFigure',2)
 title(strcat('t =',{' '},string((r*0.01)-0.01),'s'));
 
@@ -349,4 +348,5 @@ rotate(h, [1,0,0], 0)
 drawnow
 
 end
+%print(2, '-dpng', 'wizualizacja', '-r600');
 
