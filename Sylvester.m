@@ -226,11 +226,10 @@ end
 %% wizualizacja
 
 %HiMAT w STL
-fv = stlread('HiMAT_V003.STL');
+fv = stlread('HiMAT_V003.STL'); % wczytanie modeli stl
 ar = stlread('arrow.stl');
-Sm = diag([0.01 0.01 0.01]); % scale
+Sm = diag([0.01 0.01 0.01]); % skalowanie
 Sm2 = diag([0.3 0.3 1]);
-%R1 = [cosd(60),0,sind(60);0 1 0; -sind(60) 0, cosd(60)];
 fv.vertices = fv.vertices*Sm;
 ar.vertices = ar.vertices*Sm2;
 ftmp = fv;
@@ -245,7 +244,7 @@ time = out2.tout;
 theta = out2.state.signals.values(:,4);
 alpha = out2.state.signals.values(:,2);
 
-for r = 1:20:length(time)
+for r = 1:20:length(time) % wyswietlanie w pêtli
 set(0,'CurrentFigure',2)
 title(strcat('t =',{' '},string((r*0.01)-0.01),'s'));
 
@@ -280,22 +279,6 @@ xlim([0 t]);
 xlabel('t (s)'); 
 ylabel('x_4');
 grid on;
-
-% subplot(4,3,11)
-% plot(out2.tout(1:r),out2.output.signals.values(1:r,1),'m-','LineWidth',1.8);
-% xlim([0 t]);
-% %ylim([min(ctrl)-(0.1*max(ctrl)+0.1) max(ctrl)+(0.1*max(ctrl)+0.1)])
-% xlabel('t (s)'); 
-% ylabel('y_1');
-% grid on;
-% 
-% subplot(4,3,10)
-% plot(out2.tout(1:r),out2.output.signals.values(1:r,2),'c-','LineWidth',1.8);
-% xlim([0 t]);
-% %ylim([min(ctrl)-(0.1*max(ctrl)+0.1) max(ctrl)+(0.1*max(ctrl)+0.1)])
-% xlabel('t (s)'); 
-% ylabel('y_2');
-% grid on;
 
 subplot(4,2,[2,4,6,8])
 
