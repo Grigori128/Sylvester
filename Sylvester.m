@@ -287,7 +287,7 @@ zlim([-50 50])
 
 %k¹ty obrotu
 s = theta(r) - deg2rad(90); %oœ x
-d = alpha(r) - deg2rad(90);
+d = theta(r) - alpha(r) - deg2rad(90);
 p = 0; %oœ y
 y = 0; %oœ z <-- to nas interesuje
 
