@@ -50,6 +50,7 @@ N = double(nT*B-L*D);
 x0 = [1 1 1 1]'; 
 z0 = nT*[-1 -1 -1 -1]';
 t = 10;
+inpt = 1; %wybór typu sygna³u wejœciowego, inpt = 1 --> skoki jednostkowe, inpt = -1 --> zera
 out = sim('Sylvester_sym'); %skoki jednostkowe na t = 2 dla u1 i t = 7 dla u2 
 
 figure(1)
