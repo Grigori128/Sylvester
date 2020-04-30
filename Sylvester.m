@@ -113,7 +113,7 @@ for i=1:500
 if rb2.Value == 1 && rb3.Value == 0 
 %zapis figurki do formatu png
 close(guifig)
-print(1, '-dpng', 'wyniki_estymacji', '-r600')
+print(1, '-dpng', 'wyniki_estymacji0', '-r600')
 disp('Zapisano')%
 break;
 else
@@ -244,40 +244,36 @@ time = out2.tout;
 theta = out2.state.signals.values(:,4);
 alpha = out2.state.signals.values(:,2);
 
-for r = 1:20:length(time) % wyswietlanie w pêtli
+for r = 1:10:length(time) % wyswietlanie w pêtli
 set(0,'CurrentFigure',2)
 title(strcat('t =',{' '},string((r*0.01)-0.01),'s'));
 
 subplot(4,2,1)
 plot(out2.tout(1:r),out2.state.signals.values(1:r,1),'k-','LineWidth',1.8);
-%ylim([min(theta)-0.1*max(theta) max(theta)+0.1*max(theta)])
 xlim([0 t]);
 xlabel('t (s)');
-ylabel('x_1');
+ylabel('x_1 (rad/s)');
 grid on;
 
 subplot(4,2,3)
 plot(out2.tout(1:r),out2.state.signals.values(1:r,2),'b-','LineWidth',1.8);
-%ylim([min(omega)-0.1*max(omega) max(omega)+0.1*max(omega)])
 xlim([0 t]);
 xlabel('t (s)');
-ylabel('x_2');
+ylabel('x_2 (rad)');
 grid on;
 
 subplot(4,2,5)
 plot(out2.tout(1:r),out2.state.signals.values(1:r,3),'r-','LineWidth',1.8);
-%ylim([min(tau)-0.1*max(tau) max(tau)+0.1*max(tau)])
 xlim([0 t]);
 xlabel('t (s)'); 
-ylabel('x_3');
+ylabel('x_3 (rad/s)');
 grid on;
 
 subplot(4,2,7)
 plot(out2.tout(1:r),out2.state.signals.values(1:r,4),'g-','LineWidth',1.8);
 xlim([0 t]);
-%ylim([min(ctrl)-(0.1*max(ctrl)+0.1) max(ctrl)+(0.1*max(ctrl)+0.1)])
 xlabel('t (s)'); 
-ylabel('x_4');
+ylabel('x_4 (rad)');
 grid on;
 
 subplot(4,2,[2,4,6,8])
@@ -289,16 +285,16 @@ ylim([-50 50])
 zlim([-50 50])
 
 %k¹ty obrotu
-s = theta(r)-90; %oœ x
-d = theta(r) - alpha(r)-90;
+s = theta(r) - deg2rad(90); %oœ x
+d = alpha(r) - deg2rad(90);
 p = 0; %oœ y
 y = 0; %oœ z <-- to nas interesuje
 
 %macierze rotacji dla poszczególnych osi
-Rx = [1 0 0; 0 cosd(s) -sind(s); 0 sind(s), cosd(s)];
-Ra = [1 0 0; 0 cosd(d) -sind(d); 0 sind(d), cosd(d)];
-Ry = [cosd(p) 0 sind(p); 0 1 0; -sind(p) 0 cosd(p)];
-Rz = [cosd(y) -sind(y) 0; sind(y) cosd(y) 0; 0 0 1];
+Rx = [1 0 0; 0 cos(s) -sin(s); 0 sin(s), cos(s)];
+Ra = [1 0 0; 0 cos(d) -sin(d); 0 sin(d), cos(d)];
+Ry = [cos(p) 0 sin(p); 0 1 0; -sin(p) 0 cos(p)];
+Rz = [cos(y) -sin(y) 0; sin(y) cos(y) 0; 0 0 1];
 
 %wektor translacji do centrowania
 le=length(ftmp.vertices);
